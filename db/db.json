@@ -66,15 +66,15 @@
   "status": [
     {
       "id": 1,
-      "tipo": "Solicitado"
+      "tipo": "Requested"
     },
     {
       "id": 2,
-      "tipo": "Em produção"
+      "tipo": "Production"
     },
     {
       "id": 3,
-      "tipo": "Finalizado"
+      "tipo": "Finished"
     }
   ],
   "burgers": [
@@ -90,15 +90,26 @@
       "id": 1
     },
     {
-      "name": "Will",
-      "meat": "Maminha",
-      "bread": "Parmesão e Orégano",
+      "name": "Késsia",
+      "meat": "Picanha",
+      "bread": "3 Queijos",
       "optional": [
-        "Bacon",
+        "Salame",
         "Cheddar"
       ],
       "status": "Requested",
       "id": 2
+    },
+    {
+      "name": "Lexie",
+      "meat": "Maminha",
+      "bread": "Italiano Branco",
+      "optional": [
+        "Bacon",
+        "Cheddar"
+      ],
+      "status": "Finished",
+      "id": 3
     }
   ]
 }

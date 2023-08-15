@@ -1,5 +1,6 @@
 <template>
     <div id="burger-table">
+        <Message :msg="msg" v-show="msg" />
         <div>
             <div id="burger-table-heading">
                 <div class="order-id">#:</div>
@@ -10,23 +11,26 @@
                 <div>Actions:</div>
             </div>
         </div>
+
         <div id="burger-table-rows">
-            <div class="burger-table-row">
-                <div class="order-number">1</div>
-                <div>João</div>
-                <div>Pão</div>
-                <div>Maminha</div>
+            <div class="burger-table-row" v-for="burger in burgers" :key="burger.id">
+                <div class="order-number">{{ burger.id }}</div>
+                <div>{{ burger.name }}</div>
+                <div>{{ burger.bread }}</div>
+                <div>{{ burger.meat }}</div>
                 <div>
                     <ul>
-                        <li>Salame</li>
-                        <li>Tomate</li>
+                        <li v-for="(optional, index) in burger.optional" :key="index">{{ optional }}</li>
                     </ul>
                 </div>
                 <div>
-                    <select name="status" class="status">
+                    <select name="status" class="status" @change="updateBurger($event, burger.id)">
                         <option value="">Select</option>
+                        <option v-for="selectOp in status" :key="selectOp.id" :value="selectOp.tipo" :selected="burger.status == selectOp.tipo">
+                            {{ selectOp.tipo }}
+                        </option>
                     </select>
-                    <button class="delete-btn">Cancel</button>
+                    <button class="delete-btn" @click="deleteBurger(burger.id)">Cancel</button>
                 </div>
             </div>
         </div>
@@ -34,8 +38,70 @@
 </template>
 
 <script>
+import Message from './Message.vue'
+
     export default {
-        name: 'Dashboard'
+        name: 'Dashboard',
+        components: {
+            Message
+        },
+        data() {
+            return {
+                burgers: null,
+                burger_id: null,
+                status: [],
+                msg: null
+            }
+        },
+        methods: {
+            async getOrders(){
+                const req = await fetch("http://localhost:3000/burgers")
+                const data = await req.json()
+
+                this.burgers = data
+
+                this.getStatus()
+            },
+            async getStatus() {
+                const req = await fetch("http://localhost:3000/status")
+                const data = await req.json()
+
+                this.status = data
+            },
+            async deleteBurger(id) {
+                const req = await fetch(`http://localhost:3000/burgers/${id}`, {
+                    method: 'DELETE'
+                })
+
+                const res = await req.json()
+
+                this.msg = `Order removed successfully`
+
+                setTimeout(() => this.msg = "", 3000)
+
+                this.getOrders()
+            },
+            async updateBurger(event, id) {
+                const option = event.target.value;
+
+                const dataJson = JSON.stringify({status: option})
+
+                const req = await fetch(`http://localhost:3000/burgers/${id}`, {
+                    method: 'PATCH',
+                    headers: {"Content-Type": "application/json"},
+                    body: dataJson
+                })
+
+                const res = await req.json()
+
+                this.msg = `The order N° ${res.id} was update to ${res.status}!`
+
+                setTimeout(() => this.msg = "", 3000)
+            }
+        },
+        mounted() {
+            this.getOrders()
+        }
     }
 </script>
 
